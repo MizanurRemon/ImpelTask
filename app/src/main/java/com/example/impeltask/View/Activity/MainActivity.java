@@ -30,4 +30,6 @@ public class MainActivity extends AppCompatActivity {
         binding.tabLayout.setupWithViewPager(binding.viewPager);
         binding.tabLayout.getTabAt(0).select();
     }
+
+
 }

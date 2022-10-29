@@ -95,11 +95,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginBottom="@dimen/_5sdp"
             android:fontFamily="@font/archivo"
             android:text="Latest News"
             android:textAllCaps="true"
             android:textColor="@color/default_color"
+            android:textSize="@dimen/_12sdp"
             android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView

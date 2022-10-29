@@ -1,5 +1,6 @@
 package com.example.impeltask.View.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -17,6 +18,7 @@ import com.example.impeltask.Utils.API.APIService;
 import com.example.impeltask.Utils.API.AppConfig;
 import com.example.impeltask.Utils.Const.Constants;
 import com.example.impeltask.Utils.Const.Urls;
+import com.example.impeltask.View.Activity.News_details_activity;
 import com.example.impeltask.databinding.FragmentNewsBinding;
 
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.Url;
 
-public class Fragment_news extends Fragment {
+public class Fragment_news extends Fragment implements News_adapter.OnItemClickListener{
 
     FragmentNewsBinding binding;
     String apiKey;
@@ -60,6 +62,7 @@ public class Fragment_news extends Fragment {
                     itemList = new ArrayList<>();
                     itemList = response.body().articles;
                     adapter = new News_adapter(itemList);
+                    adapter.setOnItemClickListener(Fragment_news.this::OnItemClick);
                     binding.itemView.setAdapter(adapter);
                 } else {
 
@@ -85,5 +88,19 @@ public class Fragment_news extends Fragment {
         binding.itemView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.itemView.setItemViewCacheSize(150);
 
+    }
+
+    @Override
+    public void OnItemClick(int position) {
+        Top_headline_response.Article response = itemList.get(position);
+        //getActivity().getSupportFragmentManager().beginTransaction().replace()
+        Intent intent = new Intent(getActivity(), News_details_activity.class);
+        intent.putExtra("imageurl", response.urlToImage);
+        intent.putExtra("author", response.author);
+        intent.putExtra("title", response.title);
+        intent.putExtra("content", response.content);
+        intent.putExtra("date", response.publishedAt);
+        intent.putExtra("source", response.source.name);
+        startActivity(intent);
     }
 }
