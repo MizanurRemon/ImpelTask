@@ -1,6 +1,9 @@
 package com.example.impeltask.View.Fragment;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.impeltask.Helpers.BookmarkColumns;
 import com.example.impeltask.R;
 import com.example.impeltask.databinding.FragmentBookmarksBinding;
 import com.example.impeltask.databinding.FragmentNewsBinding;
@@ -28,8 +32,9 @@ public class Fragment_bookmarks extends Fragment {
     ArrayList mTitles = new ArrayList();
     ArrayList mUrls = new ArrayList();
 
-    public final Uri BOOKMARKS_URI = Uri.parse("content://com.android.chrome/bookmarks");
+    //"content://com.android.chrome.browser/bookmarks"
     //public final Uri BOOKMARKS_URI = Uri.parse("content://browser/bookmarks");
+    public final Uri BOOKMARKS_URI = Uri.parse("content://com.android.chrome/bookmarks");
     //public final Uri BOOKMARKS_URI = Uri.parse("content://com.android.chrome.browser/bookmarks");
     //public final Uri BOOKMARKS_URI = Uri.parse("content://com.android.chrome.browser/bookmarks/Bookmarks bar");
     public final String[] HISTORY_PROJECTION = new String[]{
@@ -81,19 +86,38 @@ public class Fragment_bookmarks extends Fragment {
     }
 
     private void viewDidAppear() {
-        //getBookmarks();
-        getBrowserHist();
+        getBookmarks();
+        //getBrowserHist();
+        /*Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage("com.android.chrome");
+        if (launchIntent != null) {
+            startActivity(launchIntent);//null pointer check in case package name was not found
+
+        }else {
+            Uri uri = Uri.parse("https://play.google.com/store/apps/details?id=com.android.chrome"); // missing 'http://' will cause crashed
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        }*/
+
+        /*Intent intent = new Intent();
+        intent.setComponent(new ComponentName("com.android.chrome", "bookmarks"));
+        startActivity(intent);*/
+
+        //chrome://bookmarks/#1
+        /*Uri uri = Uri.parse("https://chrome://bookmarks/#1"); // missing 'http://' will cause crashed
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);*/
+
     }
 
 
     @SuppressLint("Range")
     public void getBookmarks() {
-        String[] proj = new String[]{HISTORY_PROJECTION[5], HISTORY_PROJECTION[1]};
+        String[] proj = new String[]{BookmarkColumns.TITLE, BookmarkColumns.URL};
         Uri uriCustom = Uri.parse(String.valueOf(BOOKMARKS_URI));
-        String sel = HISTORY_PROJECTION[4] + " = 1"; // 0 = history, 1 = bookmark
+        String sel = BookmarkColumns.BOOKMARK + " = 1"; // 0 = history, 1 = bookmark
         Cursor mCur = getActivity().getContentResolver().query(uriCustom, proj, sel, null, null);
-        //getActivity().startManagingCursor(mCur);
-        // mCur.moveToFirst();
+        getActivity().startManagingCursor(mCur);
+        mCur.moveToFirst();
         @SuppressWarnings("unused")
         String title = "";
         @SuppressWarnings("unused")
@@ -102,37 +126,34 @@ public class Fragment_bookmarks extends Fragment {
         if (mCur.moveToFirst() && mCur.getCount() > 0) {
             boolean cont = true;
             while (mCur.isAfterLast() == false && cont) {
-                title = mCur.getString(mCur.getColumnIndex(HISTORY_PROJECTION[5]));
-                url = mCur.getString(mCur.getColumnIndex(HISTORY_PROJECTION[1]));
+                title = mCur.getString(mCur.getColumnIndex(BookmarkColumns.TITLE));
+                url = mCur.getString(mCur.getColumnIndex(BookmarkColumns.URL));
+                Log.e("title", title);
+                Log.e("url", url);
                 // Do something with title and url
-                Log.d("dataxx", mCur
-                        .getString(HISTORY_PROJECTION_TITLE_INDEX));
-                Log.d("dataxx", mCur
-                        .getString(HISTORY_PROJECTION_URL_INDEX));
                 mCur.moveToNext();
             }
-        }else {
-            Log.d("dataxx", "nothing");
+        } else {
+            Toast.makeText(getContext(), "no data", Toast.LENGTH_SHORT).show();
         }
     }
 
 
-
     @SuppressLint("Range")
-    public void getBrowserHist()  {
+    public void getBrowserHist() {
 
 
-        String[] proj = new String[] { HISTORY_PROJECTION[5], HISTORY_PROJECTION[1]};
+        String[] proj = new String[]{HISTORY_PROJECTION[5], HISTORY_PROJECTION[1]};
         Uri uriCustom = Uri.parse(String.valueOf(BOOKMARKS_URI));
-        String sel = HISTORY_PROJECTION[4] + " = 1";  // 0 = history, 1 =bookmark
+        String sel = HISTORY_PROJECTION[4] + " = 0";  // 0 = history, 1 =bookmark
         Cursor mCur = getActivity().getContentResolver().query(uriCustom, proj, sel, null, null);
         getActivity().startManagingCursor(mCur);
-       // mCur.moveToFirst();
+        mCur.moveToFirst();
 
         String title = "";
         String url = "";
 
-        /*if (mCur.moveToFirst() && mCur.getCount() > 0) {
+        if (mCur.moveToFirst() && mCur.getCount() > 0) {
             while (mCur.isAfterLast() == false && mCur.getCount() > 0) {
 
                 //title = mCur.getString(mCur.getColumnIndex(Browser.BookmarkColumns.TITLE));
@@ -143,12 +164,10 @@ public class Fragment_bookmarks extends Fragment {
 
                 mCur.moveToNext();
             }
+        } else {
+            Toast.makeText(getContext(), "no data", Toast.LENGTH_SHORT).show();
         }
-        if (mCur.getCount()>0 && (mCur.moveToFirst())){
-            Toast.makeText(getContext(), "hi", Toast.LENGTH_SHORT).show();
-        }*/
 
-        //Log.d("dataxx", String.valueOf(mCur.getCount()));
 
     }
 }
