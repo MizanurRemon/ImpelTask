@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,7 +35,7 @@ public class Fragment_bookmarks extends Fragment {
     ArrayList mUrls = new ArrayList();
 
     //"content://com.android.chrome.browser/bookmarks"
-    //public final Uri BOOKMARKS_URI = Uri.parse("content://browser/bookmarks");
+    //public final Uri BOOKMARKS_URI = Uri.parse("chrome://bookmarks");
     public final Uri BOOKMARKS_URI = Uri.parse("content://com.android.chrome/bookmarks");
     //public final Uri BOOKMARKS_URI = Uri.parse("content://com.android.chrome.browser/bookmarks");
     //public final Uri BOOKMARKS_URI = Uri.parse("content://com.android.chrome.browser/bookmarks/Bookmarks bar");
@@ -55,6 +57,7 @@ public class Fragment_bookmarks extends Fragment {
     private Boolean isStarted = false;
     private Boolean isVisible = false;
 
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -71,7 +74,22 @@ public class Fragment_bookmarks extends Fragment {
         View view = binding.getRoot();
 
 
+
         return view;
+    }
+
+    private void go_to_default_browser() {
+        Intent browserIntent = new Intent("android.intent.action.VIEW", Uri.parse("https://"));
+        ResolveInfo resolveInfo = getActivity().getPackageManager().resolveActivity(browserIntent, PackageManager.MATCH_DEFAULT_ONLY);
+
+       try {
+           // This is the default browser's packageName
+           String packageName =resolveInfo.activityInfo.packageName;
+
+           Toast.makeText(getContext(), packageName, Toast.LENGTH_SHORT).show();
+           //startActivity(browserIntent);
+           startActivity(getActivity().getPackageManager().getLaunchIntentForPackage(packageName));
+       }catch (Exception e){}
     }
 
     @Override
@@ -115,8 +133,8 @@ public class Fragment_bookmarks extends Fragment {
         String[] proj = new String[]{BookmarkColumns.TITLE, BookmarkColumns.URL};
         Uri uriCustom = Uri.parse(String.valueOf(BOOKMARKS_URI));
         String sel = BookmarkColumns.BOOKMARK + " = 1"; // 0 = history, 1 = bookmark
-        Cursor mCur = getActivity().getContentResolver().query(uriCustom, proj, sel, null, null);
-        getActivity().startManagingCursor(mCur);
+        @SuppressLint("Recycle") Cursor mCur = getActivity().getContentResolver().query(uriCustom, proj, sel, null, null);
+       // getActivity().startManagingCursor(mCur);
         mCur.moveToFirst();
         @SuppressWarnings("unused")
         String title = "";

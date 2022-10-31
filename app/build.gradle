@@ -70,4 +70,12 @@ dependencies {
     //noinspection GradleDependency
     implementation "androidx.navigation:navigation-compose:$nav_version"
 
+    //implementation 'org.mozilla.fxa-data:thirdparty:0.0.1'
+    //implementation 'org.mozilla.fxa-data:gecko:0.0.1'
+    //implementation 'org.mozilla.fxa-data:download:0.0.1@aar'
+
+
+    //implementation 'me.everything:providers-stetho:1.0.1'
+
+
 }

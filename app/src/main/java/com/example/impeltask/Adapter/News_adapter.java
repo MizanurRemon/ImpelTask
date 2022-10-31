@@ -39,8 +39,8 @@ public class News_adapter extends RecyclerView.Adapter<News_adapter.ViewHolder>{
     @Override
     public void onBindViewHolder(@NonNull News_adapter.ViewHolder holder, int position) {
         Top_headline_response.Article response = itemList.get(position);
-        holder.titleText.setText(response.title);
-        holder.headlineText.setText(response.description);
+        holder.titleText.setText(response.author);
+        holder.headlineText.setText(response.title);
 
         Glide.with(holder.itemView.getContext()).load(response.urlToImage).placeholder(R.drawable.loader)
                 .listener(new RequestListener<Drawable>() {
